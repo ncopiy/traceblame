@@ -3,9 +3,6 @@ from sys import exc_info
 
 from git import Repo
 
-# override me
-BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-
 
 class Blame:
     def __init__(self, last_commit):
@@ -36,13 +33,6 @@ class ExtendedRepo(Repo):
         return Blame(last_commit=last_commit)
 
 
-def get_last_commit_data(path, line):
-    if not hasattr(get_last_commit_data, '_repo'):
-        get_last_commit_data._repo = ExtendedRepo(BASE_DIR)
-
-    return get_last_commit_data._repo.get_blame_repr(path=path, line=line)
-
-
 def iter_stacks(tb):
     tb_ = tb
 
@@ -51,10 +41,14 @@ def iter_stacks(tb):
         tb_ = tb_.tb_next
 
 
-def exc_info_with_blame():
-    exc_type, exc_value, exc_traceback = exc_info()
-    for tb in iter_stacks(exc_traceback):
-        tb.tb_frame.f_locals.update(
-            {"blame": get_last_commit_data(path=tb.tb_frame.f_code.co_filename, line=tb.tb_lineno)}
-        )
-    return exc_type, exc_value, exc_traceback
+def get_exc_info_with_blame_func(repo_path):
+    repo = ExtendedRepo(repo_path)
+
+    def inner():
+        exc_type, exc_value, exc_traceback = exc_info()
+        for tb in iter_stacks(exc_traceback):
+            tb.tb_frame.f_locals.update(
+                {"blame": repo.get_blame_repr(path=tb.tb_frame.f_code.co_filename, line=tb.tb_lineno)}
+            )
+        return exc_type, exc_value, exc_traceback
+    return inner
