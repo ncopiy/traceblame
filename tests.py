@@ -3,6 +3,7 @@ from trace_blame import ExtendedRepo, get_exc_info_with_blame_func, iter_stacks
 
 def test_files_in_repo():
     expected = {
+        '.github/workflows/pep8.yml',
         '.gitignore',
         'trace_blame/main.py',
         'trace_blame/__init__.py',
@@ -22,7 +23,7 @@ def test_sys_exc_info_without_blame():
 
     try:
         divide()
-    except:
+    except:  # noqa
         exc_type, exc_value, exc_traceback = exc_info()
         for tb in iter_stacks(exc_traceback):
             assert "blame" not in tb.tb_frame.f_locals
@@ -35,9 +36,12 @@ def test_sys_exc_info_with_blame():
 
     try:
         divide()
-    except:
+    except:  # noqa
         exc_type, exc_value, exc_traceback = exc_info_func()
         assert exc_type == ZeroDivisionError
         assert exc_value is not None
         for tb in iter_stacks(exc_traceback):
             assert "blame" in tb.tb_frame.f_locals
+
+            # ref https://github.com/ncopiy/trace-blame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
+            assert tb.tb_frame.f_locals["blame"].email == "ncopiy@ya.ru"
