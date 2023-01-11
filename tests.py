@@ -4,14 +4,13 @@ from trace_blame import ExtendedRepo, get_exc_info_with_blame_func, iter_stacks
 def test_files_in_repo():
     expected = {
         '.gitignore',
-        'trace-blame/main.py',
-        'trace-blame/__init__.py',
+        'trace_blame/main.py',
+        'trace_blame/__init__.py',
         'requirements.txt',
         'tests.py',
     }
     repo = ExtendedRepo()
-    print(set(repo.files_in_repo))
-    assert set(repo.files_in_repo) == expected
+    assert sorted(repo.files_in_repo) == sorted(expected)
 
 
 def divide():
