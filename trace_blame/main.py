@@ -19,7 +19,7 @@ class Blame:
 class ExtendedRepo(Repo):
     @property
     def files_in_repo(self):
-        return self.git.ls_tree("--name-only", r=self.head.ref.name).split()
+        return self.git.ls_files().split()
 
     @property
     def full_path_files_in_repo(self):
