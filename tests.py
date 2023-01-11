@@ -42,3 +42,6 @@ def test_sys_exc_info_with_blame():
         assert exc_value is not None
         for tb in iter_stacks(exc_traceback):
             assert "blame" in tb.tb_frame.f_locals
+
+            # ref https://github.com/ncopiy/trace-blame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
+            assert tb.tb_frame.f_locals["blame"].email == "ncopiy@ya.ru"
