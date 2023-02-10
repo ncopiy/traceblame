@@ -9,6 +9,7 @@ class Blame:
         self.name = last_commit.author.name
         self.email = last_commit.author.email
         self.message = last_commit.message
+        self.commit = last_commit.hexsha
         self.commit_with_branch_or_first_tag = last_commit.name_rev
         self.date = last_commit.committed_datetime.isoformat()
 

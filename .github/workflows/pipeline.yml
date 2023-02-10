@@ -15,12 +15,16 @@ jobs:
 
     steps:
       - uses: actions/checkout@v2
+        with:
+          fetch-depth: 0
       - name: Set up Python ${{ matrix.python-version }}
         uses: actions/setup-python@v2
         with:
           python-version: '3.x'
       - name: Install dependencies
         run: |
+          git status
+          git log -1
           python -m pip install --upgrade pip
           pip install -r requirements.txt
           pip install pytest
@@ -30,4 +34,8 @@ jobs:
           flake8 --exclude .git,__pycache__,venv --extend-ignore E501
       - name: Test with pytest
         run: |
+          git status
+          git log --oneline
+          git blame tests.py -L 18,18
+          git blame HEAD tests.py -L 18,18
           pytest tests.py -vv -s
