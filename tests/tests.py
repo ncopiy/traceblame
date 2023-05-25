@@ -10,6 +10,10 @@ def test_files_in_repo():
         'requirements.txt',
         'tests/__init__.py',
         'tests/tests.py',
+        'setup/__init__.py',
+        'setup/setup.py',
+        'LICENSE',
+        'README.md',
     }
     repo = ExtendedRepo()
     assert sorted(repo.files_in_repo) == sorted(expected)
@@ -47,7 +51,7 @@ def test_sys_exc_info_with_blame():
             # ref https://github.com/ncopiy/trace-blame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
             assert "trace-blame/tests/tests.py" in tb.tb_frame.f_code.co_filename
             line = tb.tb_lineno
-            assert line in [39, 19], line
+            assert line in [43, 23], line
 
             assert tb.tb_frame.f_locals["blame"].email == "ncopiy@ya.ru", str(tb.tb_frame.f_locals["blame"])
             assert tb.tb_frame.f_locals["blame"].commit == "99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e"

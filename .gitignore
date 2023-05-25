@@ -4,3 +4,6 @@ __pycache__/*
 .pytest_cache/*
 trace_blame/__pycache__/*
 tests/__pycache__/*
+trace_blame.egg-info/*
+dist/*
+build/*
