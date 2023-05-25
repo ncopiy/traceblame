@@ -30,12 +30,8 @@ jobs:
       - name: Build wheels
         run: |
           python3 setup/setup.py sdist bdist_wheel
-      - name: Checkpoint
-        run: |
-          ls
-          ls dist
-      - name: Publish to Test PyPI
+      - name: Publish to PyPI
+        if: startsWith(github.ref, 'refs/tags')
         uses: pypa/gh-action-pypi-publish@release/v1
         with:
-          password: ${{ secrets.PYPI_API_TOKEN_TEST }}
-          repository-url: https://test.pypi.org/legacy/
+          password: ${{ secrets.PYPI_API_TOKEN }}
