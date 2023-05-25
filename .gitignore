@@ -3,3 +3,4 @@ __pycache__/*
 .idea/*
 .pytest_cache/*
 trace_blame/__pycache__/*
+tests/__pycache__/*

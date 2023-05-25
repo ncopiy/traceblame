@@ -36,6 +36,6 @@ jobs:
         run: |
           git status
           git log --oneline
-          git blame tests.py -L 18,18
-          git blame HEAD tests.py -L 18,18
-          pytest tests.py -vv -s
+          git blame tests/tests.py -L 18,18
+          git blame HEAD tests/tests.py -L 18,18
+          pytest tests/tests.py -vv -s

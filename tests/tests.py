@@ -8,7 +8,8 @@ def test_files_in_repo():
         'trace_blame/main.py',
         'trace_blame/__init__.py',
         'requirements.txt',
-        'tests.py',
+        'tests/__init__.py',
+        'tests/tests.py',
     }
     repo = ExtendedRepo()
     assert sorted(repo.files_in_repo) == sorted(expected)
@@ -32,7 +33,7 @@ def test_sys_exc_info_without_blame():
 def test_sys_exc_info_with_blame():
     import os
 
-    exc_info_func = get_exc_info_with_blame_func(os.path.dirname(os.path.abspath(__file__)))
+    exc_info_func = get_exc_info_with_blame_func(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
     try:
         divide()
@@ -44,9 +45,9 @@ def test_sys_exc_info_with_blame():
             assert "blame" in tb.tb_frame.f_locals
 
             # ref https://github.com/ncopiy/trace-blame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
-            assert "trace-blame/tests.py" in tb.tb_frame.f_code.co_filename
+            assert "trace-blame/tests/tests.py" in tb.tb_frame.f_code.co_filename
             line = tb.tb_lineno
-            assert line in [38, 18]
+            assert line in [39, 19], line
 
             assert tb.tb_frame.f_locals["blame"].email == "ncopiy@ya.ru", str(tb.tb_frame.f_locals["blame"])
             assert tb.tb_frame.f_locals["blame"].commit == "99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e"
