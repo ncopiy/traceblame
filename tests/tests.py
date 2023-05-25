@@ -1,4 +1,4 @@
-from trace_blame import ExtendedRepo, get_exc_info_with_blame_func, iter_stacks
+from traceblame import ExtendedRepo, get_exc_info_with_blame_func, iter_stacks
 
 
 def test_files_in_repo():
@@ -6,8 +6,8 @@ def test_files_in_repo():
         '.github/workflows/pipeline.yml',
         '.github/workflows/release.yml',
         '.gitignore',
-        'trace_blame/main.py',
-        'trace_blame/__init__.py',
+        'traceblame/main.py',
+        'traceblame/__init__.py',
         'requirements.txt',
         'tests/__init__.py',
         'tests/tests.py',
@@ -49,8 +49,8 @@ def test_sys_exc_info_with_blame():
         for tb in iter_stacks(exc_traceback):
             assert "blame" in tb.tb_frame.f_locals
 
-            # ref https://github.com/ncopiy/trace-blame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
-            assert "trace-blame/tests/tests.py" in tb.tb_frame.f_code.co_filename
+            # ref https://github.com/ncopiy/traceblame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
+            assert "traceblame/tests/tests.py" in tb.tb_frame.f_code.co_filename
             line = tb.tb_lineno
             assert line in [44, 24], line
 

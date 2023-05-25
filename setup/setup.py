@@ -4,7 +4,7 @@ from typing import List
 import setuptools
 
 
-LIB_NAME = "trace_blame"
+LIB_NAME = "traceblame"
 LIB_VERSION = "0.0.1"
 
 
@@ -15,7 +15,7 @@ class Setup:
             author_email="ncopiy@yandex.com",
             long_description=self.get_long_description(),
             long_description_content_type="text/markdown",
-            url="https://github.com/ncopiy/trace-blame",
+            url="https://github.com/ncopiy/traceblame",
             classifiers=[
                 "Programming Language :: Python :: 3",
                 "License :: OSI Approved :: MIT License",
