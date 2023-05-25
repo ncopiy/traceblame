@@ -2,5 +2,8 @@ venv/*
 __pycache__/*
 .idea/*
 .pytest_cache/*
-trace_blame/__pycache__/*
+traceblame/__pycache__/*
 tests/__pycache__/*
+traceblame.egg-info/*
+dist/*
+build/*
