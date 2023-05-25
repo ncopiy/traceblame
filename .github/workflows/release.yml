@@ -34,3 +34,8 @@ jobs:
         run: |
           ls
           ls dist
+      - name: Publish to Test PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          password: ${{ secrets.PYPI_API_TOKEN_TEST }}
+          repository-url: https://test.pypi.org/legacy/
