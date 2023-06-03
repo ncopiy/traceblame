@@ -2,10 +2,11 @@ name: Release Trace Blame CI
 
 on:
   push:
-    branches: [ make-build ]
+    branches: [ master ]
 
 jobs:
-  build:
+  release_to_pypi:
+    needs: flake_and_test
 
     runs-on: ubuntu-latest
     strategy:
