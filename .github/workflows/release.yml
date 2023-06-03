@@ -13,11 +13,10 @@ on:
 
 jobs:
   release_to_pypi:
-    needs: flake_and_test
-
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
+    if: github.event_name == 'release' && github.event.action == 'created'
 
     steps:
       - uses: actions/checkout@v2
