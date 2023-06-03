@@ -9,8 +9,15 @@ def divide_by_zero():
     return 10 / 0
 
 
-DIVIDE_TO_ZERO_LINE = 9
+def divide_by_zero_caller():
+    divide_by_zero()
+
+
+DIVIDE_TO_ZERO_LINE_NUMBER = 9
+DIVIDE_TO_ZERO_CALLER_LINE_NUMBER = 13
+
 TRACEBLAME_GIT_PATH = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+
 ALL_FILES_IN_TRACEBLAME_REPO = {
     '.github/workflows/pipeline.yml',
     '.github/workflows/release.yml',
