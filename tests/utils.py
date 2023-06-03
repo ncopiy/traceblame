@@ -2,7 +2,7 @@ import os
 
 from git import Repo
 
-from traceblame import TracebackExtender
+from traceblame import TracebackEnricher
 
 
 def divide_by_zero():
@@ -38,6 +38,6 @@ ALL_FILES_IN_TRACEBLAME_REPO = {
 }
 
 
-def get_current_tb_extender() -> TracebackExtender:
+def get_current_tb_enricher() -> TracebackEnricher:
     repo = Repo(path=TRACEBLAME_GIT_PATH)
-    return TracebackExtender(repo=repo)
+    return TracebackEnricher(repo=repo)

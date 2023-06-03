@@ -1,20 +1,20 @@
 import os.path
 from sys import exc_info
 
-from tests.utils import get_current_tb_extender, TRACEBLAME_GIT_PATH, ALL_FILES_IN_TRACEBLAME_REPO, \
+from tests.utils import get_current_tb_enricher, TRACEBLAME_GIT_PATH, ALL_FILES_IN_TRACEBLAME_REPO, \
     DIVIDE_TO_ZERO_LINE_NUMBER, divide_by_zero, DIVIDE_TO_ZERO_COMMIT_SHA, DIVIDE_TO_ZERO_CALLER_COMMIT_SHA, \
     DIVIDE_TO_ZERO_CALLER_LINE_NUMBER
 from traceblame import iter_stacks
 
 
 def test_files_in_repo():
-    tb_extender = get_current_tb_extender()
-    assert sorted(tb_extender.files_in_repo) == sorted(ALL_FILES_IN_TRACEBLAME_REPO)
+    tb_enricher = get_current_tb_enricher()
+    assert sorted(tb_enricher.files_in_repo) == sorted(ALL_FILES_IN_TRACEBLAME_REPO)
 
 
 def test_get_blame_repr():
-    tb_extender = get_current_tb_extender()
-    divide_to_zero_line_repr = tb_extender.get_blame_repr(
+    tb_enricher = get_current_tb_enricher()
+    divide_to_zero_line_repr = tb_enricher.get_blame_repr(
         path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "utils.py"),
         line=DIVIDE_TO_ZERO_LINE_NUMBER,
     )
@@ -22,7 +22,7 @@ def test_get_blame_repr():
     assert divide_to_zero_line_repr.email == "ncopiy@yandex.com", str(divide_to_zero_line_repr)
     assert divide_to_zero_line_repr.commit == DIVIDE_TO_ZERO_COMMIT_SHA
 
-    invalid_line_repr = tb_extender.get_blame_repr(
+    invalid_line_repr = tb_enricher.get_blame_repr(
         path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "ululu", "ulululululululu.py"),
         line=777,
     )
@@ -30,9 +30,9 @@ def test_get_blame_repr():
 
 
 def test_get_last_commit():
-    tb_extender = get_current_tb_extender()
+    tb_enricher = get_current_tb_enricher()
 
-    commit_of_valid_path = tb_extender.get_last_commit(
+    commit_of_valid_path = tb_enricher.get_last_commit(
         path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "utils.py"),
         line=DIVIDE_TO_ZERO_LINE_NUMBER,
     )
@@ -40,7 +40,7 @@ def test_get_last_commit():
     assert commit_of_valid_path.author.email == "ncopiy@yandex.com", str(commit_of_valid_path.author)
     assert commit_of_valid_path.hexsha == DIVIDE_TO_ZERO_COMMIT_SHA
 
-    commit_of_invalid_path = tb_extender.get_last_commit(
+    commit_of_invalid_path = tb_enricher.get_last_commit(
         path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "ululu", "ulululululululu.py"),
         line=777,
     )
@@ -57,12 +57,12 @@ def test_sys_exc_info_without_blame():
 
 
 def test_sys_exc_info_with_blame():
-    tb_extender = get_current_tb_extender()
+    tb_enricher = get_current_tb_enricher()
 
     try:
         divide_by_zero()
     except:  # noqa
-        exc_type, exc_value, exc_traceback = tb_extender.get_extended_exc_info()
+        exc_type, exc_value, exc_traceback = tb_enricher.get_extended_exc_info()
     else:
         assert False, "we expected exception"
 

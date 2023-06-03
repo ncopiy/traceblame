@@ -28,7 +28,7 @@ class Blame:
         return repr(self.__dict__)
 
 
-class TracebackExtender:
+class TracebackEnricher:
     def __init__(self, repo: Repo, *args, **kwargs):
         self.repo = repo
 
