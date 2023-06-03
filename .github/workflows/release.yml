@@ -2,9 +2,8 @@ name: Release Trace Blame CI
 
 on:
   push:
-    branches: [ master ]
-  release:
-    types: [created]
+    tags:
+    - '*'
   workflow_run:
     workflows: [ "flake_and_test" ]
     branches: [ master ]
@@ -16,7 +15,6 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       fail-fast: true
-    if: github.event_name == 'release' && github.event.action == 'created'
 
     steps:
       - uses: actions/checkout@v2
