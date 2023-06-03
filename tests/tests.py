@@ -1,34 +1,55 @@
-from traceblame import ExtendedRepo, get_exc_info_with_blame_func, iter_stacks
+import os.path
+from sys import exc_info
+
+from tests.utils import get_current_tb_enricher, TRACEBLAME_GIT_PATH, ALL_FILES_IN_TRACEBLAME_REPO, \
+    DIVIDE_TO_ZERO_LINE_NUMBER, divide_by_zero, DIVIDE_TO_ZERO_COMMIT_SHA, DIVIDE_TO_ZERO_CALLER_COMMIT_SHA, \
+    DIVIDE_TO_ZERO_CALLER_LINE_NUMBER
+from traceblame import iter_stacks
 
 
 def test_files_in_repo():
-    expected = {
-        '.github/workflows/pipeline.yml',
-        '.github/workflows/release.yml',
-        '.gitignore',
-        'traceblame/main.py',
-        'traceblame/__init__.py',
-        'requirements.txt',
-        'tests/__init__.py',
-        'tests/tests.py',
-        'setup/__init__.py',
-        'setup/setup.py',
-        'LICENSE',
-        'README.md',
-    }
-    repo = ExtendedRepo()
-    assert sorted(repo.files_in_repo) == sorted(expected)
+    tb_enricher = get_current_tb_enricher()
+    assert sorted(tb_enricher.files_in_repo) == sorted(ALL_FILES_IN_TRACEBLAME_REPO)
 
 
-def divide():
-    return 10 / 0
+def test_get_blame_repr():
+    tb_enricher = get_current_tb_enricher()
+    divide_to_zero_line_repr = tb_enricher.get_blame_repr(
+        path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "utils.py"),
+        line=DIVIDE_TO_ZERO_LINE_NUMBER,
+    )
+    assert divide_to_zero_line_repr is not None
+    assert divide_to_zero_line_repr.email == "ncopiy@yandex.com", str(divide_to_zero_line_repr)
+    assert divide_to_zero_line_repr.commit == DIVIDE_TO_ZERO_COMMIT_SHA
+
+    invalid_line_repr = tb_enricher.get_blame_repr(
+        path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "ululu", "ulululululululu.py"),
+        line=777,
+    )
+    assert invalid_line_repr is None
+
+
+def test_get_last_commit():
+    tb_enricher = get_current_tb_enricher()
+
+    commit_of_valid_path = tb_enricher.get_last_commit(
+        path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "utils.py"),
+        line=DIVIDE_TO_ZERO_LINE_NUMBER,
+    )
+    assert commit_of_valid_path is not None
+    assert commit_of_valid_path.author.email == "ncopiy@yandex.com", str(commit_of_valid_path.author)
+    assert commit_of_valid_path.hexsha == DIVIDE_TO_ZERO_COMMIT_SHA
+
+    commit_of_invalid_path = tb_enricher.get_last_commit(
+        path=os.path.join(TRACEBLAME_GIT_PATH, "tests", "ululu", "ulululululululu.py"),
+        line=777,
+    )
+    assert commit_of_invalid_path is None
 
 
 def test_sys_exc_info_without_blame():
-    from sys import exc_info
-
     try:
-        divide()
+        divide_by_zero()
     except:  # noqa
         exc_type, exc_value, exc_traceback = exc_info()
         for tb in iter_stacks(exc_traceback):
@@ -36,23 +57,35 @@ def test_sys_exc_info_without_blame():
 
 
 def test_sys_exc_info_with_blame():
-    import os
-
-    exc_info_func = get_exc_info_with_blame_func(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+    tb_enricher = get_current_tb_enricher()
 
     try:
-        divide()
+        divide_by_zero()
     except:  # noqa
-        exc_type, exc_value, exc_traceback = exc_info_func()
-        assert exc_type == ZeroDivisionError
-        assert exc_value is not None
-        for tb in iter_stacks(exc_traceback):
-            assert "blame" in tb.tb_frame.f_locals
+        exc_type, exc_value, exc_traceback = tb_enricher.get_extended_exc_info()
+    else:
+        assert False, "we expected exception"
 
-            # ref https://github.com/ncopiy/traceblame/commit/99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e
-            assert "traceblame/tests/tests.py" in tb.tb_frame.f_code.co_filename
-            line = tb.tb_lineno
-            assert line in [44, 24], line
+    assert exc_type == ZeroDivisionError
+    assert exc_value is not None
 
-            assert tb.tb_frame.f_locals["blame"].email == "ncopiy@ya.ru", str(tb.tb_frame.f_locals["blame"])
-            assert tb.tb_frame.f_locals["blame"].commit == "99b7c490fc0344b0f31a931f6c6f4c3b89c2da9e"
+    any_tb_at_utils = False
+
+    expected_sha_to_line = {
+        DIVIDE_TO_ZERO_COMMIT_SHA: DIVIDE_TO_ZERO_LINE_NUMBER,
+        DIVIDE_TO_ZERO_CALLER_COMMIT_SHA: DIVIDE_TO_ZERO_CALLER_LINE_NUMBER,
+    }
+
+    for tb in iter_stacks(exc_traceback):
+        assert "blame" in tb.tb_frame.f_locals
+
+        if "traceblame/tests/utils.py" in tb.tb_frame.f_code.co_filename:
+            any_tb_at_utils = True
+        else:
+            continue
+
+        assert tb.tb_frame.f_locals["blame"].email == "ncopiy@yandex.com", str(tb.tb_frame.f_locals["blame"])
+        assert tb.tb_frame.f_locals["blame"].commit in expected_sha_to_line, str(tb.tb_frame.f_locals["blame"])
+        assert tb.tb_lineno == expected_sha_to_line[tb.tb_frame.f_locals["blame"].commit], str(tb.tb_frame.f_locals["blame"])
+
+    assert any_tb_at_utils
