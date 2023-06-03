@@ -25,6 +25,7 @@ class Setup:
             name=LIB_NAME,
             packages=self._get_package_dir(LIB_NAME),
             version=LIB_VERSION,
+            python_requires='>=3.7',
         )
 
     def get_requirements(self) -> List[str]:
