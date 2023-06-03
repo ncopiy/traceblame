@@ -5,6 +5,11 @@ on:
     branches: [ master ]
   release:
     types: [created]
+  workflow_run:
+    workflows: [ "flake_and_test" ]
+    branches: [ master ]
+    types:
+      - completed
 
 jobs:
   release_to_pypi:
