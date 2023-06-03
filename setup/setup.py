@@ -5,7 +5,7 @@ import setuptools
 
 
 LIB_NAME = "traceblame"
-LIB_VERSION = "0.0.5"
+LIB_VERSION = "0.0.7"
 
 
 class Setup:
