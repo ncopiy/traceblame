@@ -8,13 +8,6 @@ from typing import List, Optional, Iterable, Tuple, Type
 from git import Repo, Commit
 
 
-__names__ = [
-    'Blame',
-    'TracebackExtender',
-    'iter_stacks',
-]
-
-
 class Blame:
     def __init__(self, last_commit: Commit):
         self.name = last_commit.author.name
